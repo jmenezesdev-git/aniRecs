@@ -15,11 +15,32 @@ John Smith's account name
 Isekai ecchi
 2006-2020
 
+
+
+
 it gives you one of the top 3 you haven't seen from between 2006 and 2020 or something.....
 
+If you ever think of using Redux, use Zustand. It's easier and modern.
 
+Use for UI https://ui.shadcn.com/
+For CSS use Tailwind
+NPX possibly needed to use?
+
+
+
+Parent -> Child 
+Child -> Parent
+
+In angular easy serivce W
+
+Parent can SET Genre Filter
+Genre Filter can be READ by parent. (Or child can update parent variable)
+
+
+
+v0 - website that creates copypastable WORKING UI components as output from AI prompt.
 */
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback} from 'react';
 import DateSlider from './dateSlider/dateSlider.js';
 import GenreFilter from './genreFilter/genreFilter.tsx';
 
@@ -36,14 +57,24 @@ export default function AniRecs() {
 
   const [genreListVisibility, setGenreListVisibility] = useState(false);
   const [excludedGenreListVisibility, setExcludedGenreListVisibility] = useState(false);
-  // const [filteredUsers, setFilteredUsers] = useState(users)
   let minDateRef = useRef(1917);
   let maxDateRef = useRef(new Date().getFullYear());
-  let genreListFilterRef = useRef("");
   let excludedGenreListFilterRef = useRef("");
 
+  const [genreFilter, setGenreFilter] = useState(0);
+  const [excludedGenreFilter, setExcludedGenreFilter] = useState(0);
+  const [state, setState] = useState(Date.now());
+  const [state2, setState2] = useState(Date.now() + 1);
+
+  
+  const[newText, setNewText] = useState("");
 
 
+
+
+  const setVal = (val) => {
+    setGenreListFilterVal(val);
+  };
 
   function handleFormSubmission(){
     event.preventDefault();
@@ -51,10 +82,14 @@ export default function AniRecs() {
     console.log(`Adult Content was set to: ${enableAdultContent}`);
     console.log(minDateRef.current);
     console.log(maxDateRef.current);
-    console.log(genreListFilterRef.current);
-    console.log('Test12345');
-    genreListFilterRef.current = "";
-    console.log(genreListFilterRef.current);
+    //console.log(genreListFilterRef.current);
+    //console.log('Test12345');
+    // genreListFilterRef.current = "";
+    // console.log(genreListFilterRef.current);
+    //console.log("genreListFilterRef = ");
+    //console.log(genreListFilterRef);
+    console.log("parentVal");
+    console.log(genreFilter);
   }
 
   const handleDateRangeChange = (val) => {
@@ -64,6 +99,11 @@ export default function AniRecs() {
 
   const clearFormContents = () => {
     console.log("I clicked Clear Form Contents!");
+    // setGenreListFilterDispatch({type:'update', value:""});
+    setGenreFilter("");
+    setExcludedGenreFilter("");
+    setState(Date.now());
+    setState2(Date.now() + 1);
   }
 
   //if preceding text is non-space (search based on that text)
@@ -98,12 +138,14 @@ export default function AniRecs() {
                 setEnableAdultContent(e.target.checked);
               }} /><br/>
           </label>
-          <GenreFilter id="genreFilter" genreListFilterRef={genreListFilterRef} placeholderContents="Search Genre..."/>
-          <GenreFilter id="excludedGenreFilter" genreListFilterRef={excludedGenreListFilterRef} placeholderContents="Exclude Genre..."/>
+          {/* onSubmit={updateGenreFilter} */}
+          <GenreFilter id="genreFilter" placeholderContents="Search Genre..."   parentVal={genreFilter} setParentVal={setGenreFilter} key={state}/>
+          <GenreFilter id="excludedGenreFilter" placeholderContents="Exclude Genre..." parentVal={excludedGenreFilter} setParentVal={setExcludedGenreFilter} key={state2}/>
           <DateSlider minDateRef={minDateRef} maxDateRef={maxDateRef}/>
           <input type="submit" value="Submit"/>
         </form>
         <button onClick={clearFormContents}>Clear</button>
+        {/* <button >{genreListFilterRef.listFilter}</button> */}
       </div>
     </>
   );

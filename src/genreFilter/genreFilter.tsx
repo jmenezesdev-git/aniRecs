@@ -1,11 +1,13 @@
-import React, { useState, useEffect, useReducer, useRef } from "react";
+import React, { useState, useEffect, useReducer, useRef, memo } from "react";
 // import "./dateSlider.css";
+// export const GenreFilter = memo(function GenreFilter({ onSubmit }){});
 
-export const GenreFilter = ({id, genreListFilterRef, placeholderContents}) => {
+export const GenreFilter = ({id, placeholderContents, onSubmit, parentVal, setParentVal}) => { //genreFilterDis //genreListFilterRef
     const [apiUsers, setApiUsers] = useState([]);
     const [genreTerms, setGenreTerms] = useState("");
     const [genreListVisibility, setGenreListVisibility] = useState(false);
     const [filteredUsers, setFilteredUsers] = useState([]);
+
 
     useEffect(() => {
         fetch('https://dummyjson.com/users')
@@ -20,7 +22,7 @@ export const GenreFilter = ({id, genreListFilterRef, placeholderContents}) => {
 
     function showListOverlay(){
         hideGenreLists(false);
-        tryGenreFilterChange(genreListFilterRef.current,"genre");
+        tryGenreFilterChange(genreTerms,"genre");
       }
 
     function hideGenreLists(val) {
@@ -37,7 +39,11 @@ export const GenreFilter = ({id, genreListFilterRef, placeholderContents}) => {
     function tryGenreFilterChange(val, type){
         if (type.toLowerCase() == "genre"){
           //setGenreTerms(val);
-          genreListFilterRef.current = val;
+          setGenreTerms(val);
+          // genreListFilterRef = val;
+          setParentVal(val);
+          //genreFilterDis({type:'update', value:val});
+
         }
         // else if (type.toLowerCase() == "excludegenre"){
         //   setExcludeGenreTerms(val);
@@ -107,18 +113,24 @@ export const GenreFilter = ({id, genreListFilterRef, placeholderContents}) => {
         e.stopPropagation();
         // console.log(e.target.textContent);
         const re = /^(.* )?(\S+)$/;
-        var test = genreListFilterRef.current;
-        if (genreListFilterRef.current.match(re) && genreListFilterRef.current.match(re)[2] != null){
+        var test = genreTerms;
+        if (genreTerms.match(re) && genreTerms.match(re)[2] != null){
           var newGenreTerms = "";
-          if (genreListFilterRef.current.match(re)[1] != null && genreListFilterRef.current.match(re)[1] != undefined){
-            newGenreTerms += genreListFilterRef.current.match(re)[1]
+          if (genreTerms.match(re)[1] != null && genreTerms.match(re)[1] != undefined){
+            newGenreTerms += genreTerms.match(re)[1]
           }
           newGenreTerms += e.target.textContent + " ";
           //setGenreTerms(newGenreTerms);
-          genreListFilterRef.current = newGenreTerms;
+          setGenreTerms(newGenreTerms);
+          //genreFilterDis({type:'update', value:newGenreTerms});
+          // genreListFilterRef = newGenreTerms;
+          setParentVal(newGenreTerms);
         }
         else{
-            genreListFilterRef.current = genreListFilterRef.current + e.target.textContent + " ";
+          setGenreTerms(genreTerms + e.target.textContent + " ");
+            //genreFilterDis({type:'update', value:genreTerms + e.target.textContent + " "});
+            // genreListFilterRef = genreTerms + e.target.textContent + " ";
+            setParentVal(genreTerms + e.target.textContent + " ");
         //   setGenreTerms(genreTerms + e.target.textContent + " ");
         }
     
@@ -154,7 +166,7 @@ export const GenreFilter = ({id, genreListFilterRef, placeholderContents}) => {
                     //onBlur appears to only provide event details for ITSELF and null rather than the new object we are selecting. Does not necognize it's own child objects. onBlur={trySetGenreListVisibility}
                     placeholder={placeholderContents}
                     // value={genreTerms}
-                    value={genreListFilterRef.current}
+                    value={genreTerms}
                     onChange={onGenreFilterChange}
                     onClick={() => setGenreListVisibility(true)}
                     
