@@ -1,8 +1,13 @@
 import React, { useState, useEffect, useReducer, useRef, memo } from "react";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { Button } from "./ui/button";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "./ui/command";
+import { cn } from "~/lib/utils";
 // import "./dateSlider.css";
 // export const GenreFilter = memo(function GenreFilter({ onSubmit }){});
 
-export const GenreFilter = ({id, placeholderContents, onSubmit, parentVal, setParentVal}) => { //genreFilterDis //genreListFilterRef
+export const GenreFilter = ({id, placeholderContents, parentVal, setParentVal}) => { //genreFilterDis //genreListFilterRef
     const [apiUsers, setApiUsers] = useState([]);
     const [genreTerms, setGenreTerms] = useState("");
     const [genreListVisibility, setGenreListVisibility] = useState(false);
@@ -114,24 +119,19 @@ export const GenreFilter = ({id, placeholderContents, onSubmit, parentVal, setPa
         // console.log(e.target.textContent);
         const re = /^(.* )?(\S+)$/;
         var test = genreTerms;
-        if (genreTerms.match(re) && genreTerms.match(re)[2] != null){
+        const genreTermsMatches = genreTerms.match(re);
+        if (genreTermsMatches !== null && genreTermsMatches[2] !== null){
           var newGenreTerms = "";
-          if (genreTerms.match(re)[1] != null && genreTerms.match(re)[1] != undefined){
-            newGenreTerms += genreTerms.match(re)[1]
+          if (genreTermsMatches[1] != null && genreTermsMatches[1] != undefined){
+            newGenreTerms += genreTermsMatches[1]
           }
           newGenreTerms += e.target.textContent + " ";
-          //setGenreTerms(newGenreTerms);
           setGenreTerms(newGenreTerms);
-          //genreFilterDis({type:'update', value:newGenreTerms});
-          // genreListFilterRef = newGenreTerms;
           setParentVal(newGenreTerms);
         }
         else{
           setGenreTerms(genreTerms + e.target.textContent + " ");
-            //genreFilterDis({type:'update', value:genreTerms + e.target.textContent + " "});
-            // genreListFilterRef = genreTerms + e.target.textContent + " ";
-            setParentVal(genreTerms + e.target.textContent + " ");
-        //   setGenreTerms(genreTerms + e.target.textContent + " ");
+          setParentVal(genreTerms + e.target.textContent + " ");
         }
     
         setGenreListVisibility(false);
@@ -160,27 +160,135 @@ export const GenreFilter = ({id, placeholderContents, onSubmit, parentVal, setPa
     const wrapperRef = useRef(null);
     useOutsideAlerter(wrapperRef);
 
+    const [open, setOpen] = React.useState(false);
+    const [value, setValue] = React.useState("");
+    const frameworks  = [
+        {
+          value: "next.js",
+          label: "Next.js",
+        },
+        {
+          value: "sveltekit",
+          label: "SvelteKit",
+        },
+        {
+          value: "nuxt.js",
+          label: "Nuxt.js",
+        },
+        {
+          value: "remix",
+          label: "Remix",
+        },
+        {
+          value: "astro",
+          label: "Astro",
+        },
+    ]
+
+
+    // {genreListVisibility && (
+    //     <ul className='dropdownlist' >
+    //     {filteredUsers.map(user => <li key={user.id}
+    //                                   onClick={onClickGenreList} 
+    //                               >{user.firstName}</li>)}
+    //     </ul>
+
+
+
+
+
+    //   )}
+
+
     return (
         <div className="genre-filter" onClick={showListOverlay} ref={wrapperRef}>
             <input type="text"
-                    //onBlur appears to only provide event details for ITSELF and null rather than the new object we are selecting. Does not necognize it's own child objects. onBlur={trySetGenreListVisibility}
+                    // onBlur appears to only provide event details for ITSELF and null rather than the new object we are selecting. Does not necognize it's own child objects. onBlur={trySetGenreListVisibility}
                     placeholder={placeholderContents}
-                    // value={genreTerms}
                     value={genreTerms}
                     onChange={onGenreFilterChange}
                     onClick={() => setGenreListVisibility(true)}
-                    
+
               />
-              {genreListVisibility && (
-                // onBlur={hideGenreLists(true)}
-                <ul className='dropdownlist' >
-                {filteredUsers.map(user => <li key={user.id}
-                                              onClick={onClickGenreList} 
-                                          >{user.firstName}</li>)}
-                </ul>
-              )}
+
+    <Command>
+      <CommandInput placeholder="Search framework..." />
+      <CommandList>
+        <CommandEmpty>No framework found.</CommandEmpty>
+        <CommandGroup>
+
+
+          {filteredUsers.map((user) => (
+            <CommandItem
+              key={user.id}
+              value={user.id}
+              onSelect={(currentValue) => {
+                setValue(currentValue === value ? "" : currentValue);
+                console.log("Setting Value to: " + currentValue);
+                setOpen(false);
+              }}
+            >
+              <Check
+                className={cn(
+                  "mr-2 h-4 w-4",
+                  value === user.id ? "opacity-100" : "opacity-0"
+                )}
+              />
+              {user.firstName}
+            </CommandItem>
+          ))}
+        </CommandGroup>
+      </CommandList>
+    </Command>
+
               <br/>
         </div>
+    //     <Popover open={open} onOpenChange={setOpen}>
+    //   <PopoverTrigger asChild>
+    //     <Button
+    //       variant="outline"
+    //       role="combobox"
+    //       aria-expanded={open}
+    //       className="w-[200px] justify-between"
+    //     >
+    //       {value ? value
+    //         : "Select framework..."}
+    //       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+    //     </Button>
+    //   </PopoverTrigger>
+    //   <PopoverContent className="w-[200px] p-0">
+    //     <Command>
+    //       <CommandInput placeholder="Search framework..." />
+    //       <CommandList>
+    //         <CommandEmpty>No framework found.</CommandEmpty>
+    //         <CommandGroup>
+
+
+    //           {filteredUsers.map((user) => (
+    //             <CommandItem
+    //               key={user.id}
+    //               value={user.id}
+    //               onSelect={(currentValue) => {
+    //                 setValue(currentValue === value ? "" : currentValue);
+    //                 console.log("Setting Value to: " + currentValue);
+    //                 setOpen(false);
+    //               }}
+    //             >
+    //               <Check
+    //                 className={cn(
+    //                   "mr-2 h-4 w-4",
+    //                   value === user.id ? "opacity-100" : "opacity-0"
+    //                 )}
+    //               />
+    //               {user.firstName}
+    //             </CommandItem>
+    //           ))}
+    //         </CommandGroup>
+    //       </CommandList>
+    //     </Command>
+    //   </PopoverContent>
+    // </Popover>
+
     );
 
 };
