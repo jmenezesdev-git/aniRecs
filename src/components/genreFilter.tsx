@@ -8,16 +8,12 @@ import { cn } from "~/lib/utils";
 // export const GenreFilter = memo(function GenreFilter({ onSubmit }){});
 import { Badge } from "./ui/badge";
 
-import { Command as CommandPrimitive } from "cmdk";
+import { Command as CommandPrimitive, useCommandState } from "cmdk";
 import { number, string } from "zod";
 import  commandScore from "command-score";
 
 export const GenreFilter = ({id, placeholderContents, parentVal, setParentVal}) => { //genreFilterDis //genreListFilterRef
      const [apiUsers, setApiUsers] = useState([]);
-
-    // const [genreTerms, setGenreTerms] = useState("");
-    // const [genreListVisibility, setGenreListVisibility] = useState(false);
-    // const [filteredUsers, setFilteredUsers] = useState([]);
 
 
     useEffect(() => {
@@ -30,179 +26,27 @@ export const GenreFilter = ({id, placeholderContents, parentVal, setParentVal}) 
           .catch(err => console.log(err))
       }, [])
 
-    // function showListOverlay(){
-    //     hideGenreLists(false);
-    //     tryGenreFilterChange(genreTerms,"genre");
-    //   }
-
-    // function hideGenreLists(val) {
-    // if (val == true){
-    //     setGenreListVisibility(false);
-    // }
-    // else{
-    //     setGenreListVisibility(true);
-    // }
-
-    // }
-
-    // function tryGenreFilterChange(val, type){
-    //     if (type.toLowerCase() == "genre"){
-    //       setGenreTerms(val);
-    //       setParentVal(val);
-
-    //     }
-    //     genreFilterChange(val);
-    //   }
-      
-    // const onGenreFilterChange = (e) => { 
-    //     tryGenreFilterChange(e.target.value, "genre");
-        
-    // }
-
-    // function genreFilterChange(val){
-    //     const re = /^((.*) )?(\S+)?$/;
-    //     const searchTerm = val;
-    //     var filteredItems = apiUsers.filter((user) =>
-    //       user.firstName.toLowerCase().includes("")
-    //     );
-    //     if (searchTerm.match(re) && searchTerm.match(re)[3] != null && searchTerm.match(re)[3] != undefined && searchTerm.match(re)[3] != ""){
-          
-    //       if (searchTerm.match(re)[2] != null && searchTerm.match(re)[2] != undefined && searchTerm.match(re)[2] != ""){
-    //         var exclusionArray = searchTerm.match(re)[2].split(' ');
-            
-    //         for (var i = 0; i < exclusionArray.length; i++) {
-    //           exclusionArray[i] = exclusionArray[i].toLowerCase();
-    //         }
-    //         const exclude = new Set(exclusionArray)
-    //         filteredItems = apiUsers.filter((user) =>
-    //           user.firstName.toLowerCase().includes(searchTerm.match(re)[3].toLowerCase()))
-    //           .filter((user) => 
-    //             !exclude.has(user.firstName.toLowerCase())
-    //         );
-    //       } else{
-    //         filteredItems = apiUsers.filter((user) =>
-    //           user.firstName.toLowerCase().includes(searchTerm.match(re)[3].toLowerCase()));
-    
-    //       }
-          
-    //     }
-    //     else if (searchTerm.match(re) && searchTerm.match(re)[2] != null && searchTerm.match(re)[2] != undefined && searchTerm.match(re)[2] != ""){
-    //       var exclusionArray = searchTerm.match(re)[2].split(' ');
-    //       for (var i = 0; i < exclusionArray.length; i++) {
-    //         exclusionArray[i] = exclusionArray[i].toLowerCase();
-    //       }
-    //       const exclude = new Set(exclusionArray)
-    //       filteredItems = apiUsers.filter((user) => 
-    //           !exclude.has(user.firstName.toLowerCase())
-    //       );
-    
-    //     }
-    //     else{
-    //       filteredItems = apiUsers.filter((user) =>
-    //         user.firstName.toLowerCase().match(re)
-    //       );
-    //     }
-    
-    //     setFilteredUsers(filteredItems);
-    // }
-
-    // const onClickGenreList = (e) => { 
-    //     e.stopPropagation();
-    //     const re = /^(.* )?(\S+)$/;
-    //     var test = genreTerms;
-    //     const genreTermsMatches = genreTerms.match(re);
-    //     if (genreTermsMatches !== null && genreTermsMatches[2] !== null){
-    //       var newGenreTerms = "";
-    //       if (genreTermsMatches[1] != null && genreTermsMatches[1] != undefined){
-    //         newGenreTerms += genreTermsMatches[1]
-    //       }
-    //       newGenreTerms += e.target.textContent + " ";
-    //       setGenreTerms(newGenreTerms);
-    //       setParentVal(newGenreTerms);
-    //     }
-    //     else{
-    //       setGenreTerms(genreTerms + e.target.textContent + " ");
-    //       setParentVal(genreTerms + e.target.textContent + " ");
-    //     }
-    
-    //     setGenreListVisibility(false);
-    //     hideGenreLists(true);
-    // }  
-    
-    // function useOutsideAlerter(ref) {
-    //     useEffect(() => {
-    //       function handleClickOutside(event) {
-    //         if (ref.current && !ref.current.contains(event.target)) {
-    //           console.log("You clicked outside of"+ id + "!");
-    //           hideGenreLists(true);
-    //         }
-    //       }
-    //       document.addEventListener("mousedown", handleClickOutside);
-    //       return () => {
-    //         document.removeEventListener("mousedown", handleClickOutside);
-    //       };
-    //     }, [ref]);
-    // }
-    // const wrapperRef = useRef(null);
-    // useOutsideAlerter(wrapperRef);
-
-    // const [open, setOpen] = React.useState(false);
-    // const [value, setValue] = React.useState("");
-
-      
-    type Article = Record<"id" | "firstName" | "lastName", string>;
-    
-
-    
-
-    type Framework = Record<"value" | "label", string>;
-    const FRAMEWORKS  = [
-        {
-          value: "next.js",
-          label: "Next.js",
-        },
-        {
-          value: "sveltekit",
-          label: "SvelteKit",
-        },
-        {
-          value: "nuxt.js",
-          label: "Nuxt.js",
-        },
-        {
-          value: "remix",
-          label: "Remix",
-        },
-        {
-          value: "astro",
-          label: "Astro",
-        },
-    ] satisfies Framework[];
-
-
-    
     const inputRef = React.useRef<HTMLInputElement>(null);
     const [open, setOpen] = React.useState(false);
-    const [selected_, setSelected_] = React.useState<Framework[]>([]);//([FRAMEWORKS[2]]);
-    const [selected, setSelected] = React.useState<never[]>([]);//([FRAMEWORKS[2]]);
+    const [selected, setSelected] = React.useState<never[]>([]);
     const [inputValue, setInputValue] = React.useState("");
 
-    var listReturnCounter = 0;
-    const maxListReturnCounter = 10;
+
     var relevanceArray = [];
 
 
-    const handleUnselect = React.useCallback((framework: never) => {
-      setSelected((prev) => prev.filter((s) => s.id !== framework.id));
-      setParentVal((prev) => prev.filter((s) => s.id !== framework.id));
+    const handleUnselect = React.useCallback((genre: never) => {
+      setSelected((prev) => prev.filter((s) => s.id !== genre.id));
+      setParentVal((prev) => prev.filter((s) => s.id !== genre.id));
     }, []);
 
     const handleKeyDown = React.useCallback(
       (e: React.KeyboardEvent<HTMLDivElement>) => {
-        relevanceArray = [];
-        populateRelevanceArray("e");
         const input = inputRef.current;
+        relevanceArray = [];
         if (input) {
+          
+          populateRelevanceArray(input.value);
           if (e.key === "Delete" || e.key === "Backspace") {
             if (input.value === "") {
               setSelected((prev) => {
@@ -221,6 +65,8 @@ export const GenreFilter = ({id, placeholderContents, parentVal, setParentVal}) 
           if (e.key === "Escape") {
             input.blur();
           }
+        } else{
+          populateRelevanceArray("");
         }
       },
       []
@@ -229,57 +75,59 @@ export const GenreFilter = ({id, placeholderContents, parentVal, setParentVal}) 
     
 
     let selectables = apiUsers.filter(
-        (framework) => !selected.includes(framework)
+        (genre) => !selected.includes(genre)
       );
 
       function populateRelevanceArray(search:string){
-        if (search.length > 0 && selectables.length > 0){
+
+        var limitResults = 3;
+        var arrayResultsCounter = 0;
+        if ( selectables.length > 0){
+          // search.length > 0 &&
           relevanceArray.splice(0,relevanceArray.length);
 
           for(var i = 0;i<selectables.length;i++){
-            // console.log(selectables[0].id);
-            // console.log(selectables[0].firstName);
             var temp = {id:selectables[i].id, name:selectables[i].firstName, score:commandScore(selectables[i].firstName, search)};
             relevanceArray.push(temp);
           }
-          console.log(relevanceArray);
           var tempArray = relevanceArray.slice();
           var values = tempArray
             .map(({ score }) => score)
             .sort((a, b) => b - a)
-            .slice(0, 3),
-          top3 = tempArray.filter(({ score }) => values.includes(score));
-          console.log(values);
-          console.log(top3);
+            .slice(0, limitResults),
+          top3 = tempArray.filter(({ score }) => {
+            if(arrayResultsCounter < limitResults && values.includes(score) && score>0){
+              arrayResultsCounter++;
+              return true;
+            } else{
+              return false;
+        }
+        
+            });
+
+          for(var i=0;i<relevanceArray.length;i++){
+            var top3ElementIndex =  top3.findIndex((element) => element.id == relevanceArray[i].id);
+
+            if(top3ElementIndex > -1){
+              relevanceArray[i].score = top3[top3ElementIndex].score;
+            }
+            else{
+              relevanceArray[i].score = 0;
+            }
+          }
         }
       }
   
       function commandFilter(value:string, search:string, keywords?:string[]){
-        // commandScore.commandScore(value, search);
-        // console.log(value);
-        // if (relevanceArray != null){
+        if (relevanceArray.length <  selectables.length){
            populateRelevanceArray(search);
-        // }
+        }
+        var result = relevanceArray.find((element) => element.name == value);
         var temp = commandScore(value, search);
-        // console.log(temp);
-        return temp;
+        return result.score;
       }
-    // FRAMEWORKS.filter(
-    //   (framework) => !selected.includes(framework)
-    // );
-
-    // {genreListVisibility && (
-    //     <ul className='dropdownlist' >
-    //     {filteredUsers.map(user => <li key={user.id}
-    //                                   onClick={onClickGenreList} 
-    //                               >{user.firstName}</li>)}
-    //     </ul>
 
 
-
-
-
-    //   )}
 
                     // onBlur appears to only provide event details for ITSELF and null rather than the new object we are selecting. Does not necognize it's own child objects. onBlur={trySetGenreListVisibility}
 
@@ -291,22 +139,22 @@ export const GenreFilter = ({id, placeholderContents, parentVal, setParentVal}) 
         >
           <div className="group rounded-md border border-input px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
             <div className="flex flex-wrap gap-1">
-              {selected.map((framework, index, array) => {
+              {selected.map((genre, index, array) => {
                 return (
-                  <Badge key={framework.id} variant="secondary">
-                    {framework.firstName}
+                  <Badge key={genre.id} variant="secondary">
+                    {genre.firstName}
                     <button
                       className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
-                          handleUnselect(framework);
+                          handleUnselect(genre);
                         }
                       }}
                       onMouseDown={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
                       }}
-                      onClick={() => handleUnselect(framework)}
+                      onClick={() => handleUnselect(genre)}
                     >
                       <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
                     </button>
@@ -331,25 +179,28 @@ export const GenreFilter = ({id, placeholderContents, parentVal, setParentVal}) 
                 <div className="absolute top-0 z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in">
                   <CommandEmpty>No matching genre found!</CommandEmpty>
                   <CommandGroup className="max-h-96 overflow-auto">
-                    {selectables.map((framework, index, array) => {
+                    {selectables.map((genre, index, array) => {
                       let result = <CommandItem
-                        key={framework.id}
+                        key={genre.id}
                         onMouseDown={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
                         }}
                         onSelect={(value) => {
                           setInputValue("");
-                          setSelected((prev) => [...prev, framework]);
-                          setParentVal((prev) => [...prev, framework]);
-                          console.log(apiUsers);
+                          setSelected((prev) => [...prev, genre]);
+                          setParentVal((prev) => [...prev, genre]);
                         }}
                         className={"cursor-pointer"}
                       >
-                        {framework.firstName}
+                        {genre.firstName}
                       </CommandItem>;
                       
-                        return (result);
+                      if (inputRef.current.value.length < 1 && genre.id > 10){
+                        return false;
+                      }
+                        
+                      return (result);
                     })}
                   </CommandGroup>
                 </div>

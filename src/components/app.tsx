@@ -45,18 +45,20 @@ v0 - website that creates copypastable WORKING UI components as output from AI p
 */
 
 
-import { useState, useEffect, useRef, useCallback} from 'react';
+import { useState, useEffect, useRef, useCallback, MouseEvent} from 'react';
 import DateSlider from './dateSlider';
 import GenreFilter from './genreFilter';
 import { Input } from "~/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "~/components/ui/card";
 import { Button } from './ui/button';
+import { Switch } from './ui/switch';
+import { Label } from './ui/label';
 
 
 export default function AniRecs() {
   const [anilistAccount, setAnilistAccount] = useState("");
   const [malAccount, setMalAccount] = useState("");
-  const [enableAdultContent, setEnableAdultContent] = useState("");
+  const [enableAdultContent, setEnableAdultContent] = useState(false);
 
   
   const [apiUsers, setApiUsers] = useState([])
@@ -84,34 +86,62 @@ export default function AniRecs() {
 //     setGenreListFilterVal(val);
 //   };
 
-  function handleFormSubmission(){
-    // event.preventDefault();
+  async function handleFormSubmission(event:MouseEvent<HTMLButtonElement, globalThis.MouseEvent>){
+    event.preventDefault();
     console.log(`The Anilist Account name you entered was: ${anilistAccount}`);
     console.log(`Adult Content was set to: ${enableAdultContent}`);
     console.log(minDateRef.current);
     console.log(maxDateRef.current);
-    //console.log(genreListFilterRef.current);
-    //console.log('Test12345');
-    // genreListFilterRef.current = "";
-    // console.log(genreListFilterRef.current);
-    //console.log("genreListFilterRef = ");
-    //console.log(genreListFilterRef);
     console.log("parentVal");
     console.log(genreFilter);
+    var myRequest = 'http://127.0.0.1:5000/aniRequest';
+      myRequest+= '?enableAdultContent=' + enableAdultContent;
+    if (genreFilter != null && genreFilter != undefined && genreFilter.length > 0){
+      myRequest+= '&genreFilter=' + genreFilter;
+    }
+    if (excludedGenreFilter != null && excludedGenreFilter != undefined && excludedGenreFilter.length > 0){
+      myRequest+= '&excludedGenreFilter=' + excludedGenreFilter;
+    }
+    if (anilistAccount != null && anilistAccount != undefined && anilistAccount.length > 0){
+      myRequest+= '&anilistAccount=' + anilistAccount;
+    }
+    if (malAccount != null && malAccount != undefined && malAccount.length > 0){
+      myRequest+= '&malAccount=' + malAccount;
+    }
+    myRequest+= '&minDate=' + minDateRef.current + '&maxDate=' + maxDateRef.current;
+    const response = await fetch(myRequest  , {
+      method: 'GET',
+      headers: {
+        "Accept": 'application/json'
+        
+      },
+    });
+  
+    if (response.status != 200) {
+      let data = await response.json();
+      console.log('Our Backend Server appears to be throwing a fit.');
+    }
+  
+    const json = await response.json();
+    console.log(json);
   }
+  
+
 
   const handleDateRangeChange = (val: string) => {
     //this.setState({language: val});
     console.log("I AM WORKING!!!" + val);
   }
 
-  const clearFormContents = () => {
+  const clearFormContents = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+    e.preventDefault();
     console.log("I clicked Clear Form Contents!");
     // setGenreListFilterDispatch({type:'update', value:""});
-    setGenreFilter("");
-    setExcludedGenreFilter("");
-    setState(Date.now());
-    setState2(Date.now() + 1);
+    // setMalAccount("ABC12346");
+    // setGenreFilter("");
+    // setExcludedGenreFilter("");
+    // setState(Date.now());
+    // setState2(Date.now() + 1);
   }
 
   //if preceding text is non-space (search based on that text)
@@ -121,7 +151,8 @@ export default function AniRecs() {
 
 
   return (
-    <form onSubmit={handleFormSubmission}>
+    <form >
+      {/* onSubmit={handleFormSubmission} */}
         <Card className="max-w-[400px]">
             <CardHeader>
                 <CardTitle>AniRecs</CardTitle>
@@ -129,37 +160,45 @@ export default function AniRecs() {
             </CardHeader>
             <CardContent>
                 <div className="formContainer">
-                    <label>Anilist Account:
+                    <Label className="text-base">Anilist Account:
                         <Input type="text"
                         value={anilistAccount}
                         onChange={(e) => setAnilistAccount(e.target.value)} /><br/>
-                    </label>
-                    <label>Mal Account:
+                    </Label>
+                    <Label className="text-base">Mal Account:
                         <Input type="text"
                         value={malAccount}
                         onChange={(e) => setMalAccount(e.target.value)} /><br/>
-                    </label>
-                    <label>Include 18+ content:
-                        <input type="checkbox"
+                    </Label>
+                    <div className="flex flex-row gap-4 items-center justify-items-center pb-4">
+                    <Label className="text-base">Include 18+ content:
+                        {/* <input type="checkbox"
                         value={enableAdultContent}
                         onChange={(e) => {
                             setEnableAdultContent(e.target.checked);
-                        }} /><br/>
-                    </label>
-                    {/* onSubmit={updateGenreFilter} */}
-                    
+                        }} /> */}
+                        {/* <Label htmlFor="email">Your email address</Label> */}
+                        
+                    </Label>
+                      <Switch
+                          checked={enableAdultContent}
+                          onCheckedChange={(e) => setEnableAdultContent(e)}
+                          // disabled
+                          aria-readonly
+                        />
+                    </div>
                     <div className="flex flex-col gap-4">
-                    <GenreFilter id="genreFilter" placeholderContents="Search Genre..."   parentVal={genreFilter} setParentVal={setGenreFilter} key={state}/>
-                    
-                    {/* <GenreFilter id="excludedGenreFilter" placeholderContents="Exclude Genre..." parentVal={excludedGenreFilter} setParentVal={setExcludedGenreFilter} key={state2}/> */}
-                    <DateSlider minDateRef={minDateRef} maxDateRef={maxDateRef}/>
+                      <GenreFilter id="genreFilter" placeholderContents="Search Genre..."   parentVal={genreFilter} setParentVal={setGenreFilter} key={state}/>
+                      
+                      <GenreFilter id="excludedGenreFilter" placeholderContents="Exclude Genre..." parentVal={excludedGenreFilter} setParentVal={setExcludedGenreFilter} key={state2}/>
+                      <DateSlider minDateRef={minDateRef} maxDateRef={maxDateRef}/>
                     
                     </div>
                 </div>
             </CardContent>
             <CardFooter className="flex justify-between">
-                <Button onClick={handleFormSubmission}>Submit</Button>
-                <Button onClick={clearFormContents}>Clear</Button>
+                <Button onClick={(e) => handleFormSubmission(e)}>Submit</Button>
+                <Button onClick={(e) => clearFormContents(e)}>Clear</Button>
             </CardFooter>
         </Card>
     </form>
