@@ -95,26 +95,25 @@ export default function AniRecs() {
     console.log("parentVal");
     console.log(genreFilter);
     var myRequest = 'http://127.0.0.1:5000/aniRequest';
-      myRequest+= '?enableAdultContent=' + enableAdultContent;
-    if (genreFilter != null && genreFilter != undefined && genreFilter.length > 0){
-      myRequest+= '&genreFilter=' + genreFilter;
-    }
-    if (excludedGenreFilter != null && excludedGenreFilter != undefined && excludedGenreFilter.length > 0){
-      myRequest+= '&excludedGenreFilter=' + excludedGenreFilter;
-    }
-    if (anilistAccount != null && anilistAccount != undefined && anilistAccount.length > 0){
-      myRequest+= '&anilistAccount=' + anilistAccount;
-    }
-    if (malAccount != null && malAccount != undefined && malAccount.length > 0){
-      myRequest+= '&malAccount=' + malAccount;
-    }
-    myRequest+= '&minDate=' + minDateRef.current + '&maxDate=' + maxDateRef.current;
+
+    
+
     const response = await fetch(myRequest  , {
-      method: 'GET',
+      method: 'POST',
+      body: JSON.stringify({
+        enableAdultContent: enableAdultContent,
+        genreFilter: genreFilter,
+        excludedGenreFilter: excludedGenreFilter,
+        malAccount: malAccount,
+        anilistAccount: anilistAccount,
+        minDate: minDateRef.current,
+        maxDate: maxDateRef.current
+      }),
       headers: {
-        "Accept": 'application/json'
+        "Accept": 'application/json',
+			  'Content-Type': 'application/json'
         
-      },
+      }
     });
   
     if (response.status != 200) {

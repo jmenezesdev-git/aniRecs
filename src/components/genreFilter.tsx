@@ -20,7 +20,23 @@ export const GenreFilter = ({id, placeholderContents, parentVal, setParentVal}) 
         fetch('https://dummyjson.com/users')
           .then(response => response.json())
           .then(data => {
+            console.log(data.users)
             setApiUsers(data.users)
+            //setFilteredUsers(data.users)
+          })
+          .catch(err => console.log(err))
+      }, [])
+
+      const [ genres, setGenres] = useState([])
+      useEffect(() => {
+        fetch('http://127.0.0.1:5000/getGenres')
+          .then(response => response.json())
+          .then(data => {
+            
+            console.log(data.data)
+            //console.log(data);
+            setGenres(data.data);
+            //setApiUsers(data.users)
             //setFilteredUsers(data.users)
           })
           .catch(err => console.log(err))
@@ -31,17 +47,19 @@ export const GenreFilter = ({id, placeholderContents, parentVal, setParentVal}) 
     const [selected, setSelected] = React.useState<never[]>([]);
     const [inputValue, setInputValue] = React.useState("");
 
+    const counterRef = React.useRef<number>(0);
 
     var relevanceArray = [];
 
 
     const handleUnselect = React.useCallback((genre: never) => {
-      setSelected((prev) => prev.filter((s) => s.id !== genre.id));
-      setParentVal((prev) => prev.filter((s) => s.id !== genre.id));
+      setSelected((prev) => prev.filter((s) => s._id !== genre._id));
+      setParentVal((prev) => prev.filter((s) => s._id !== genre._id));
     }, []);
 
     const handleKeyDown = React.useCallback(
       (e: React.KeyboardEvent<HTMLDivElement>) => {
+        counterRef.current = 0;
         const input = inputRef.current;
         relevanceArray = [];
         if (input) {
@@ -74,7 +92,7 @@ export const GenreFilter = ({id, placeholderContents, parentVal, setParentVal}) 
 
     
 
-    let selectables = apiUsers.filter(
+    let selectables = genres.filter(
         (genre) => !selected.includes(genre)
       );
 
@@ -87,7 +105,7 @@ export const GenreFilter = ({id, placeholderContents, parentVal, setParentVal}) 
           relevanceArray.splice(0,relevanceArray.length);
 
           for(var i = 0;i<selectables.length;i++){
-            var temp = {id:selectables[i].id, name:selectables[i].firstName, score:commandScore(selectables[i].firstName, search)};
+            var temp = {_id:selectables[i]._id, name:selectables[i].name, score:commandScore(selectables[i].name, search)};
             relevanceArray.push(temp);
           }
           var tempArray = relevanceArray.slice();
@@ -101,12 +119,14 @@ export const GenreFilter = ({id, placeholderContents, parentVal, setParentVal}) 
               return true;
             } else{
               return false;
-        }
+            }
         
-            });
+          });
+          // console.log("top3");
+          // console.log(top3);
 
           for(var i=0;i<relevanceArray.length;i++){
-            var top3ElementIndex =  top3.findIndex((element) => element.id == relevanceArray[i].id);
+            var top3ElementIndex =  top3.findIndex((element) => element._id === relevanceArray[i]._id);
 
             if(top3ElementIndex > -1){
               relevanceArray[i].score = top3[top3ElementIndex].score;
@@ -115,6 +135,7 @@ export const GenreFilter = ({id, placeholderContents, parentVal, setParentVal}) 
               relevanceArray[i].score = 0;
             }
           }
+          // console.log(relevanceArray);
         }
       }
   
@@ -141,8 +162,8 @@ export const GenreFilter = ({id, placeholderContents, parentVal, setParentVal}) 
             <div className="flex flex-wrap gap-1">
               {selected.map((genre, index, array) => {
                 return (
-                  <Badge key={genre.id} variant="secondary">
-                    {genre.firstName}
+                  <Badge key={genre._id} variant="secondary">
+                    {genre.name}
                     <button
                       className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
                       onKeyDown={(e) => {
@@ -181,7 +202,7 @@ export const GenreFilter = ({id, placeholderContents, parentVal, setParentVal}) 
                   <CommandGroup className="max-h-96 overflow-auto">
                     {selectables.map((genre, index, array) => {
                       let result = <CommandItem
-                        key={genre.id}
+                        key={genre._id}
                         onMouseDown={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
@@ -193,13 +214,18 @@ export const GenreFilter = ({id, placeholderContents, parentVal, setParentVal}) 
                         }}
                         className={"cursor-pointer"}
                       >
-                        {genre.firstName}
+                        {genre.name}
                       </CommandItem>;
                       
-                      if (inputRef.current.value.length < 1 && genre.id > 10){
+                      if (index == 0){
+                        counterRef.current = 0;
+                      }
+                       if (inputRef.current.value.length < 1 && counterRef.current > 10){
+                        // console.log(inputRef.current?.value.length);
                         return false;
                       }
-                        
+                      counterRef.current = counterRef.current + 1; 
+                      // console.log(inputRef.current?.value.length);
                       return (result);
                     })}
                   </CommandGroup>
