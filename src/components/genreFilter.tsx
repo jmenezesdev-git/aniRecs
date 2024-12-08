@@ -12,20 +12,18 @@ import { Command as CommandPrimitive, useCommandState } from "cmdk";
 import { number, string } from "zod";
 import  commandScore from "command-score";
 
-export const GenreFilter = ({id, placeholderContents, parentVal, setParentVal}) => { //genreFilterDis //genreListFilterRef
-     const [apiUsers, setApiUsers] = useState([]);
+export const GenreFilter = ({id, placeholderContents, parentVal, setParentVal, allowAdult}) => { //genreFilterDis //genreListFilterRef
+    //  const [apiUsers, setApiUsers] = useState([]);
 
 
-    useEffect(() => {
-        fetch('https://dummyjson.com/users')
-          .then(response => response.json())
-          .then(data => {
-            console.log(data.users)
-            setApiUsers(data.users)
-            //setFilteredUsers(data.users)
-          })
-          .catch(err => console.log(err))
-      }, [])
+    // useEffect(() => {
+    //     fetch('https://dummyjson.com/users')
+    //       .then(response => response.json())
+    //       .then(data => {
+    //         setApiUsers(data.users)
+    //       })
+    //       .catch(err => console.log(err))
+    //   }, [])
 
       const [ genres, setGenres] = useState([])
       useEffect(() => {
@@ -33,11 +31,8 @@ export const GenreFilter = ({id, placeholderContents, parentVal, setParentVal}) 
           .then(response => response.json())
           .then(data => {
             
-            console.log(data.data)
-            //console.log(data);
+            // console.log(data.data)
             setGenres(data.data);
-            //setApiUsers(data.users)
-            //setFilteredUsers(data.users)
           })
           .catch(err => console.log(err))
       }, [])
@@ -93,12 +88,19 @@ export const GenreFilter = ({id, placeholderContents, parentVal, setParentVal}) 
     
 
     let selectables = genres.filter(
-        (genre) => !selected.includes(genre)
+        (genre) => !selected.includes(genre) && ((allowAdult) || (!allowAdult && !genre.isAdult))
       );
+      
+      //TRUE
+        //Not Includes & isAdult
+        //Not Includes & Not isAdult and Not genre.isAdult
+      //FALSE
+        // Included OR genre.isAdult & Not isAdult
+        // 
 
       function populateRelevanceArray(search:string){
 
-        var limitResults = 3;
+        var limitResults = 10;
         var arrayResultsCounter = 0;
         if ( selectables.length > 0){
           // search.length > 0 &&

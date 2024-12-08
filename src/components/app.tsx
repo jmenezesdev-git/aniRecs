@@ -2,15 +2,15 @@
 //Front End of AniRecs program
 /*
   Form Entry
-    mal/anilist
-    exclusions
-    genre - comma delimited field?
-    exclude genre - comma delimited field?
+DONE  mal/anilist
+DONE  exclusions
+DONE  genre - comma delimited field?
+DONE  exclude genre - comma delimited field?
   Passes data to backend
-    probably shouldn't attach my personal api keys in any way to the front end.
+DONE  probably shouldn't attach my personal api keys in any way to the front end.
   Presents user with Recommendation and reasoning
-    maybe get a top 3 and present the top one at random
-  Find cheap hosting solution?
+DONE  maybe get a top 3 and present the top one at random
+----  Find cheap hosting solution?
 
 John Smith's account name
 Isekai ecchi
@@ -30,17 +30,6 @@ For CSS use Tailwind
 NPX possibly needed to use?
 
 
-
-Parent -> Child 
-Child -> Parent
-
-In angular easy serivce W
-
-Parent can SET Genre Filter
-Genre Filter can be READ by parent. (Or child can update parent variable)
-
-
-
 v0 - website that creates copypastable WORKING UI components as output from AI prompt.
 */
 
@@ -53,6 +42,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from './ui/button';
 import { Switch } from './ui/switch';
 import { Label } from './ui/label';
+import FlipCard from './flipCard';
 
 
 export default function AniRecs() {
@@ -78,6 +68,14 @@ export default function AniRecs() {
 
   
   const[newText, setNewText] = useState("");
+
+  const [resultsTitle, setResultsTitle] = useState("");
+  const [resultsYear, setResultsYear] = useState("");
+  const [resultsImage, setResultsImage] = useState("");
+  const [resultsDescription, setResultsDescription] = useState("");
+  const [resultsVisible, setResultsVisible] = useState(false);
+  const [resultsId, setResultsId] = useState(0);
+  const [resultsUrl, setResultsUrl] = useState("");
 
 
 
@@ -120,12 +118,31 @@ export default function AniRecs() {
       let data = await response.json();
       console.log('Our Backend Server appears to be throwing a fit.');
     }
-  
+    //console.log(response);
     const json = await response.json();
+    setResultsVisible(false);
     console.log(json);
+    if (json.id != undefined){
+      if (json.titleEN != undefined && json.titleEN != null && json.titleEN.length > 0){
+        setResultsTitle(json.titleEN);
+      }
+      else if (json.titleUserPref != undefined && json.titleUserPref != null && json.titleUserPref.length > 0){
+        setResultsTitle(json.titleUserPref);
+      }
+      else{
+        setResultsTitle("-");
+      }
+      setResultsId(json.id);
+      setResultsUrl("https://anilist.co/anime/" + json.id);
+      setResultsYear(json.startDate.year);
+      setResultsImage(json.coverImage);
+      setResultsDescription(json.description.replaceAll("<br>", "").replaceAll("<i>","").replaceAll("</i>",""));
+      // setResultsDescription(resultsDescription.replaceAll("<br>", ""))
+      // setResultsDescription(resultsDescription.substring(0, 200));
+      setResultsVisible(true);
+      console.log(json.id);
+    }
   }
-  
-
 
   const handleDateRangeChange = (val: string) => {
     //this.setState({language: val});
@@ -148,10 +165,11 @@ export default function AniRecs() {
   //search terms are all obviously space-delimited
 
 
-
   return (
     <form >
       {/* onSubmit={handleFormSubmission} */}
+      
+      <div className="flex flex-row gap-4">
         <Card className="max-w-[400px]">
             <CardHeader>
                 <CardTitle>AniRecs</CardTitle>
@@ -187,19 +205,26 @@ export default function AniRecs() {
                         />
                     </div>
                     <div className="flex flex-col gap-4">
-                      <GenreFilter id="genreFilter" placeholderContents="Search Genre..."   parentVal={genreFilter} setParentVal={setGenreFilter} key={state}/>
+                      <GenreFilter id="genreFilter" placeholderContents="Search Genre..."   parentVal={genreFilter} setParentVal={setGenreFilter} key={state} allowAdult={enableAdultContent}/>
                       
-                      <GenreFilter id="excludedGenreFilter" placeholderContents="Exclude Genre..." parentVal={excludedGenreFilter} setParentVal={setExcludedGenreFilter} key={state2}/>
+                      <GenreFilter id="excludedGenreFilter" placeholderContents="Exclude Genre..." parentVal={excludedGenreFilter} setParentVal={setExcludedGenreFilter} key={state2} allowAdult={enableAdultContent}/>
                       <DateSlider minDateRef={minDateRef} maxDateRef={maxDateRef}/>
                     
                     </div>
                 </div>
             </CardContent>
+
             <CardFooter className="flex justify-between">
                 <Button onClick={(e) => handleFormSubmission(e)}>Submit</Button>
                 <Button onClick={(e) => clearFormContents(e)}>Clear</Button>
             </CardFooter>
         </Card>
+        {resultsVisible ? (
+          <FlipCard title={resultsTitle} description={resultsDescription} year={resultsYear} image={resultsImage} url={resultsUrl}/>
+        
+        ) : null}
+        </div>
     </form>
+    
   );
 }
