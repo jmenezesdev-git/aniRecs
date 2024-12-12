@@ -1,33 +1,26 @@
 ///////////FLip Card animation is ****ed
 ////use this tutorial instead https://www.youtube.com/watch?v=GSOgbZ396MI&t=219s
-///Fix this, backspace error with score, minimize API calls (it calls once per anime in pre-return), then find hosting.
-//CloudFlare? https://www.cloudflare.com/plans/
+///Making proper card flip animations is not for the faint of heart and will take literal days. Not worth doing ATM
+///find hosting.
+//Buy domain from - CloudFlare? https://www.cloudflare.com/plans/
+//Host backend on GCP under EtherealAffairs account  https://console.cloud.google.com/run?authuser=2&hl=en&inv=1&invt=Abj4_g&project=ordinal-env-444503-k4
+//Use GCP's firebase to host front end https://console.firebase.google.com/u/2/project/anirecs/hosting/sites/anirecs
+
+//Try to skip the "npm build" process and use github directly to deploy on firebase?
+
+//Dont forget to containerize this stuff!
 
 import React, { useState, useEffect} from "react"
 // import { animated, useSpring } from "@react-spring/web";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { motion, useSpring } from "framer-motion";
 
-export const FlipCard = ({title, description, year, image, url}) => {
+export const FlipCard = ({title, description, year, image, url}:{title:any, description:any, year:any, image:any, url:any}) => {
 
-    const [isFlipped, setIsFlipped] = useState("");
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [isFlipped, setIsFlipped] = useState(false);
 
-    // const [anilistLink, setAnilistLink] = useState("https://anilist.co/anime/" + id)
-    // const { transform, opacity } = useSpring({
-    //     opacity: isFlipped ? 1 : 0,
-    //     transform: `perspective(1800px) rotateY(${isFlipped ? 180 : 0}deg)`,
-    //     config: { mass: 5, tension: 500, friction: 80 },
-    //   });
 
-    const handleMouseEnter = () => {
-        setIsFlipped(true);
-    };
-    const handleMouseLeave = () => {
-    if (!isDropdownOpen) {
-        setIsFlipped(false);
-    }
-    };
+
 
     
     const handleClick = () => {
@@ -37,28 +30,19 @@ export const FlipCard = ({title, description, year, image, url}) => {
             setIsFlipped(true);
         }
         };
-        const handleClickAAA = () => {
-            // if (isFlipped) {
-            //     setIsFlipped(false);
-            // } else{
-            //     setIsFlipped(true);
-            // }
-            };
-    const testStopPropagation = (e) => {
-        e.stopPropagation();
-    }
 
 
-    const [x, setX] = useState(0);
-    const [y, setY] = useState(0);
-    const [rotate, setRotate] = useState(0);
+    // const [x, setX] = useState(0);
+    // const [y, setY] = useState(0);
+    // const [rotate, setRotate] = useState(0);
 
     const spring = {
         type: "spring",
         animationDirection: "normal",
-        stiffness: 50,
-        damping: 40,
+        stiffness: 40,
+        damping: 30,
     }
+
 
 
     return (
@@ -71,7 +55,7 @@ export const FlipCard = ({title, description, year, image, url}) => {
                 }}
         >
         <motion.div
-            animate={{x: isFlipped ? 400:0 ,  rotateY: isFlipped ? -180 : 0 }}
+            animate={{x: isFlipped ? 400:0, rotateY: isFlipped ? -180 : 0 }}
             // x: isFlipped? 400:0 ,
             transition={spring}
             style={{

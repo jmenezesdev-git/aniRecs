@@ -6,7 +6,7 @@ import { Input } from "./ui/input";
 
 
 
-export const DateSlider = ({minDateRef, maxDateRef}) => {
+export const DateSlider = ({minDateRef, maxDateRef}: {minDateRef:any, maxDateRef:any}) => {
   const initialMinPrice = 1917;
   const initialMaxPrice = new Date().getFullYear();
 
@@ -25,7 +25,7 @@ export const DateSlider = ({minDateRef, maxDateRef}) => {
 
 
 
-  function minMaxValReducer(state, action) {
+  function minMaxValReducer(state: { maxVal: any; minVal: any; }, action: { type: string; value: any; }) {
     if (action.type === 'min') {
       minDateRef.current = action.value;
       return {
@@ -45,7 +45,7 @@ export const DateSlider = ({minDateRef, maxDateRef}) => {
 
 
 ////uncalled functions need rework
-  const handleMinInput = (e) => {
+  const handleMinInput = (e: { target: { value: string; }; }) => {
     const value =
       e.target.value === "" ? sliderMinValue : parseInt(e.target.value, 10);
     if (value >= sliderMinValue && value < minMaxValState.maxVal - minGap) {
@@ -54,7 +54,7 @@ export const DateSlider = ({minDateRef, maxDateRef}) => {
     }
   };
 
-  const handleMaxInput = (e) => {
+  const handleMaxInput = (e: { target: { value: string; }; }) => {
     const value =
       e.target.value === "" ? sliderMaxValue : parseInt(e.target.value, 10);
     if (value <= sliderMaxValue && value > minMaxValState.minVal + minGap) {
@@ -63,7 +63,7 @@ export const DateSlider = ({minDateRef, maxDateRef}) => {
     }
   };
 
-  const handleInputKeyDown = (e, type) => {
+  const handleInputKeyDown = (e: { key: string; target: { value: string; }; }, type: string) => {
     if (e.key === "Enter") {
       const value = parseInt(e.target.value, 10);
       if (

@@ -51,12 +51,8 @@ export default function AniRecs() {
   const [enableAdultContent, setEnableAdultContent] = useState(false);
 
   
-  const [apiUsers, setApiUsers] = useState([])
 
-  const [displayFieldClosureOverlay, setDisplayFieldClosureOverlay] = useState(false);
 
-  const [genreListVisibility, setGenreListVisibility] = useState(false);
-  const [excludedGenreListVisibility, setExcludedGenreListVisibility] = useState(false);
   let minDateRef = useRef(1917);
   let maxDateRef = useRef(new Date().getFullYear());
   let excludedGenreListFilterRef = useRef("");
@@ -67,7 +63,6 @@ export default function AniRecs() {
   const [state2, setState2] = useState(Date.now() + 1);
 
   
-  const[newText, setNewText] = useState("");
 
   const [resultsTitle, setResultsTitle] = useState("");
   const [resultsYear, setResultsYear] = useState("");
@@ -136,7 +131,7 @@ export default function AniRecs() {
       setResultsUrl("https://anilist.co/anime/" + json.id);
       setResultsYear(json.startDate.year);
       setResultsImage(json.coverImage);
-      setResultsDescription(json.description.replaceAll("<br>", "").replaceAll("<i>","").replaceAll("</i>",""));
+      setResultsDescription(json.description.replaceAll("<br>", "").replaceAll("</br>", "").replaceAll("<i>","").replaceAll("</i>",""));
       // setResultsDescription(resultsDescription.replaceAll("<br>", ""))
       // setResultsDescription(resultsDescription.substring(0, 200));
       setResultsVisible(true);

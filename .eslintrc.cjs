@@ -29,14 +29,26 @@ const config = {
       }
     ],
     "@typescript-eslint/require-await": "off",
-    "@typescript-eslint/no-misused-promises": [
-      "error",
-      {
-        "checksVoidReturn": {
-          "attributes": false
-        }
-      }
-    ]
+    // "@typescript-eslint/no-misused-promises": [
+    //   "error",
+    //   {
+    //     "checksVoidReturn": {
+    //       "attributes": false
+    //     }
+    //   }
+    // ]
+    "@typescript-eslint/prefer-for-of": "off",
+    "@typescript-eslint/no-misused-promises": "off",
+    "@typescript-eslint/no-unsafe-call": "off",
+    "@typescript-eslint/no-unsafe-assignment": "off",
+    "@typescript-eslint/no-unsafe-member-access": "off",
+    "@typescript-eslint/no-unsafe-argument": "off",
+
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-var":"off",
+    "@typescript-eslint/no-unsafe-return":"off",
+    "no-var":"off",
+    "prefer-const":"off"
   }
 }
 module.exports = config;

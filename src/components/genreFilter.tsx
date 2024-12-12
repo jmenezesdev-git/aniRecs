@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer, useRef, memo } from "react";
+import React, { useState, useEffect, } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Button } from "./ui/button";
 import { Check, ChevronsUpDown, X } from "lucide-react";
@@ -12,7 +12,7 @@ import { Command as CommandPrimitive, useCommandState } from "cmdk";
 import { number, string } from "zod";
 import  commandScore from "command-score";
 
-export const GenreFilter = ({id, placeholderContents, parentVal, setParentVal, allowAdult}) => { //genreFilterDis //genreListFilterRef
+export const GenreFilter = ({id, placeholderContents, parentVal, setParentVal, allowAdult}:{id:any, placeholderContents:any, parentVal:any, setParentVal:any, allowAdult:any}) => { //genreFilterDis //genreListFilterRef
     //  const [apiUsers, setApiUsers] = useState([]);
 
 
@@ -27,7 +27,7 @@ export const GenreFilter = ({id, placeholderContents, parentVal, setParentVal, a
 
       const [ genres, setGenres] = useState([])
       useEffect(() => {
-        fetch('http://127.0.0.1:5000/getGenres')
+        fetch('http://localhost:5000/getGenres') //http://127.0.0.1
           .then(response => response.json())
           .then(data => {
             
@@ -44,12 +44,12 @@ export const GenreFilter = ({id, placeholderContents, parentVal, setParentVal, a
 
     const counterRef = React.useRef<number>(0);
 
-    var relevanceArray = [];
+    var relevanceArray: { _id: any; name: any; score: any; }[] | { score: number; }[] = [];
 
 
     const handleUnselect = React.useCallback((genre: never) => {
       setSelected((prev) => prev.filter((s) => s._id !== genre._id));
-      setParentVal((prev) => prev.filter((s) => s._id !== genre._id));
+      setParentVal((prev: any[]) => prev.filter((s) => s._id !== genre._id));
     }, []);
 
     const handleKeyDown = React.useCallback(
@@ -67,7 +67,7 @@ export const GenreFilter = ({id, placeholderContents, parentVal, setParentVal, a
                 newSelected.pop();
                 return newSelected;
               });
-              setParentVal((prev) => {
+              setParentVal((prev: any) => {
                 const newSelected = [...prev];
                 newSelected.pop();
                 return newSelected;
@@ -147,7 +147,10 @@ export const GenreFilter = ({id, placeholderContents, parentVal, setParentVal, a
         }
         var result = relevanceArray.find((element) => element.name == value);
         var temp = commandScore(value, search);
-        return result.score;
+        if (result != null && result != undefined && result.score != null && result.score != undefined){
+          return result.score;
+        }
+        return 0;
       }
 
 
@@ -212,7 +215,7 @@ export const GenreFilter = ({id, placeholderContents, parentVal, setParentVal, a
                         onSelect={(value) => {
                           setInputValue("");
                           setSelected((prev) => [...prev, genre]);
-                          setParentVal((prev) => [...prev, genre]);
+                          setParentVal((prev: any) => [...prev, genre]);
                         }}
                         className={"cursor-pointer"}
                       >
@@ -222,9 +225,11 @@ export const GenreFilter = ({id, placeholderContents, parentVal, setParentVal, a
                       if (index == 0){
                         counterRef.current = 0;
                       }
-                       if (inputRef.current.value.length < 1 && counterRef.current > 10){
+                      if (inputRef.current != null){
+                        if (inputRef.current.value.length < 1 && counterRef.current > 10){
                         // console.log(inputRef.current?.value.length);
                         return false;
+                      }
                       }
                       counterRef.current = counterRef.current + 1; 
                       // console.log(inputRef.current?.value.length);
