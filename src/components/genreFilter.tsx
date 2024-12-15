@@ -13,21 +13,13 @@ import { number, string } from "zod";
 import  commandScore from "command-score";
 
 export const GenreFilter = ({id, placeholderContents, parentVal, setParentVal, allowAdult}:{id:any, placeholderContents:any, parentVal:any, setParentVal:any, allowAdult:any}) => { //genreFilterDis //genreListFilterRef
-    //  const [apiUsers, setApiUsers] = useState([]);
 
-
-    // useEffect(() => {
-    //     fetch('https://dummyjson.com/users')
-    //       .then(response => response.json())
-    //       .then(data => {
-    //         setApiUsers(data.users)
-    //       })
-    //       .catch(err => console.log(err))
-    //   }, [])
 
       const [ genres, setGenres] = useState([])
       useEffect(() => {
-        fetch('http://localhost:5000/getGenres') //http://127.0.0.1
+        // fetch('http://localhost:5000/getGenres')
+        // fetch('https://anirecsbackend-951543336432.northamerica-northeast2.run.app/getGenres') 
+        fetch('https://anirecsbackend-951543336432.us-central1.run.app/getGenres')
           .then(response => response.json())
           .then(data => {
             
@@ -152,8 +144,6 @@ export const GenreFilter = ({id, placeholderContents, parentVal, setParentVal, a
         }
         return 0;
       }
-
-
 
                     // onBlur appears to only provide event details for ITSELF and null rather than the new object we are selecting. Does not necognize it's own child objects. onBlur={trySetGenreListVisibility}
 

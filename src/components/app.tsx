@@ -87,10 +87,13 @@ export default function AniRecs() {
     console.log(maxDateRef.current);
     console.log("parentVal");
     console.log(genreFilter);
-    var myRequest = 'http://127.0.0.1:5000/aniRequest';
+    
+    // var myRequest = 'http://127.0.0.1:5000/aniRequest';us-central1
+    //var myRequest = 'https://anirecsbackend-951543336432.northamerica-northeast2.run.app/aniRequest';
+    var myRequest = 'https://anirecsbackend-951543336432.us-central1.run.app/aniRequest';
 
     
-
+    
     const response = await fetch(myRequest  , {
       method: 'POST',
       body: JSON.stringify({
@@ -132,8 +135,6 @@ export default function AniRecs() {
       setResultsYear(json.startDate.year);
       setResultsImage(json.coverImage);
       setResultsDescription(json.description.replaceAll("<br>", "").replaceAll("</br>", "").replaceAll("<i>","").replaceAll("</i>",""));
-      // setResultsDescription(resultsDescription.replaceAll("<br>", ""))
-      // setResultsDescription(resultsDescription.substring(0, 200));
       setResultsVisible(true);
       console.log(json.id);
     }
@@ -144,15 +145,42 @@ export default function AniRecs() {
     console.log("I AM WORKING!!!" + val);
   }
 
-  const clearFormContents = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+  const clearFormContents = async (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
     e.preventDefault();
     console.log("I clicked Clear Form Contents!");
+    console.log("Anirecs version 0.002")
     // setGenreListFilterDispatch({type:'update', value:""});
     // setMalAccount("ABC12346");
     // setGenreFilter("");
     // setExcludedGenreFilter("");
     // setState(Date.now());
     // setState2(Date.now() + 1);
+
+
+    
+    
+    var myRequest = 'https://anirecsbackend-951543336432.us-central1.run.app/serverip'
+    //var myRequest = 'https://anirecsbackend-951543336432.northamerica-northeast2.run.app/serverip';
+    const response = await fetch(myRequest  , {
+      method: 'GET',
+      headers: {
+        "Accept": 'application/json',
+			  'Content-Type': 'application/json'
+      }
+    });
+  
+    if (response.status != 200) {
+      let data = await response.json();
+      console.log('Our Backend Server appears to be throwing a fit.');
+    }
+    if (response.status == 200){
+      let data = await response.json();
+      console.log(data);
+    }
+    //console.log(response);
+
+
+
   }
 
   //if preceding text is non-space (search based on that text)
@@ -184,12 +212,6 @@ export default function AniRecs() {
                     </Label>
                     <div className="flex flex-row gap-4 items-center justify-items-center pb-4">
                     <Label className="text-base">Include 18+ content:
-                        {/* <input type="checkbox"
-                        value={enableAdultContent}
-                        onChange={(e) => {
-                            setEnableAdultContent(e.target.checked);
-                        }} /> */}
-                        {/* <Label htmlFor="email">Your email address</Label> */}
                         
                     </Label>
                       <Switch
