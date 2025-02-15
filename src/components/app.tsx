@@ -46,6 +46,11 @@ import FlipCard from './flipCard';
 
 
 export default function AniRecs() {
+
+  const __DEBUG__ = false;
+  const __DEBUGURL__ = 'http://127.0.0.1:5000/';
+  const __LIVEURL__ = 'https://anirecsbackend-951543336432.us-central1.run.app/';
+
   const [anilistAccount, setAnilistAccount] = useState("");
   const [malAccount, setMalAccount] = useState("");
   const [enableAdultContent, setEnableAdultContent] = useState(false);
@@ -62,6 +67,10 @@ export default function AniRecs() {
   const [state, setState] = useState(Date.now());
   const [state2, setState2] = useState(Date.now() + 1);
 
+  const [screenWidth, setScreenWidth] = useState(0);
+
+
+
   
 
   const [resultsTitle, setResultsTitle] = useState("");
@@ -72,14 +81,26 @@ export default function AniRecs() {
   const [resultsId, setResultsId] = useState(0);
   const [resultsUrl, setResultsUrl] = useState("");
 
+  useEffect(() => {
+    const handleResize = () => {
+      setScreenWidth(window.innerWidth);
+    };
 
+    window.addEventListener("resize", handleResize);
+    return () => {
+        window.removeEventListener("resize", handleResize);
+    };
+}, []);
 
 
 //   const setVal = (val) => {
 //     setGenreListFilterVal(val);
 //   };
 
+
   async function handleFormSubmission(event:MouseEvent<HTMLButtonElement, globalThis.MouseEvent>){
+    setScreenWidth(window.innerWidth);
+    console.log(window.innerWidth);
     event.preventDefault();
     console.log(`The Anilist Account name you entered was: ${anilistAccount}`);
     console.log(`Adult Content was set to: ${enableAdultContent}`);
@@ -88,9 +109,18 @@ export default function AniRecs() {
     console.log("parentVal");
     console.log(genreFilter);
     
-    // var myRequest = 'http://127.0.0.1:5000/aniRequest';us-central1
-    //var myRequest = 'https://anirecsbackend-951543336432.northamerica-northeast2.run.app/aniRequest';
-    var myRequest = 'https://anirecsbackend-951543336432.us-central1.run.app/aniRequest';
+    var myRequest = '';
+
+    if (__DEBUG__){
+      myRequest = __DEBUGURL__ + 'aniRequest'; 
+      //var myRequest = 'http://127.0.0.1:5000/aniRequest'; //DEBUG URL
+    }
+    else{
+      myRequest = __LIVEURL__ + 'aniRequest'; 
+      //var myRequest = 'https://anirecsbackend-951543336432.us-central1.run.app/aniRequest'; //Live URL
+    }
+
+     
 
     
     
@@ -156,11 +186,17 @@ export default function AniRecs() {
     // setState(Date.now());
     // setState2(Date.now() + 1);
 
+    var myRequest = '';
 
+    if (__DEBUG__){
+      myRequest = __DEBUGURL__ + 'serverip'; 
+      //var myRequest = 'http://127.0.0.1:5000/serverip'; //DEBUG URL
+    }
+    else{
+      myRequest = __LIVEURL__ + 'serverip'; 
+      //var myRequest = 'https://anirecsbackend-951543336432.us-central1.run.app/serverip'; //Live URL
+    }
     
-    
-    var myRequest = 'https://anirecsbackend-951543336432.us-central1.run.app/serverip'
-    //var myRequest = 'https://anirecsbackend-951543336432.northamerica-northeast2.run.app/serverip';
     const response = await fetch(myRequest  , {
       method: 'GET',
       headers: {
@@ -187,12 +223,11 @@ export default function AniRecs() {
   //when clicking if preceding text is non-space, complete text with that and add a space
   //search terms are all obviously space-delimited
 
-
   return (
     <form >
       {/* onSubmit={handleFormSubmission} */}
-      
       <div className="flex flex-row gap-4">
+      {!(resultsVisible && screenWidth < 800 )? (
         <Card className="max-w-[400px]">
             <CardHeader>
                 <CardTitle>AniRecs</CardTitle>
@@ -236,8 +271,10 @@ export default function AniRecs() {
                 <Button onClick={(e) => clearFormContents(e)}>Clear</Button>
             </CardFooter>
         </Card>
+        
+      ) : null}
         {resultsVisible ? (
-          <FlipCard title={resultsTitle} description={resultsDescription} year={resultsYear} image={resultsImage} url={resultsUrl}/>
+          <FlipCard title={resultsTitle} description={resultsDescription} year={resultsYear} image={resultsImage} url={resultsUrl} resultsVisible={resultsVisible} setResultsVisible={setResultsVisible}/>
         
         ) : null}
         </div>

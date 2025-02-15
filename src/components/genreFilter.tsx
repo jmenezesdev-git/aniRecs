@@ -17,9 +17,10 @@ export const GenreFilter = ({id, placeholderContents, parentVal, setParentVal, a
 
       const [ genres, setGenres] = useState([])
       useEffect(() => {
-        // fetch('http://localhost:5000/getGenres')
+         //fetch('http://localhost:5000/getGenres') //DEBUG URL
         // fetch('https://anirecsbackend-951543336432.northamerica-northeast2.run.app/getGenres') 
-        fetch('https://anirecsbackend-951543336432.us-central1.run.app/getGenres')
+        fetch('https://anirecsbackend-951543336432.us-central1.run.app/getGenres') ///This is our REAL URL
+        //fetch('https://0.0.0.0:9898/getGenres') //Fake URL to intentionally fail
           .then(response => response.json())
           .then(data => {
             
